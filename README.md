@@ -7,12 +7,12 @@
 
 ## Zig port of [exhaustigen](https://github.com/graydon/exhaustigen-rs) exhaustive testing library.
 
-### :rocket: Usage
+### Usage
 
 - Add `exhaustigen` dependency to `build.zig.zon`.
 
 ```sh
-zig fetch --save https://github.com/tensorush/zig-exhaustigen/archive/<git_tag_or_commit_hash>.tar.gz
+zig fetch --save git+https://github.com/tensorush/zig-exhaustigen#<git_tag_or_commit_hash>
 ```
 
 - Use `exhaustigen` dependency in `build.zig`.
