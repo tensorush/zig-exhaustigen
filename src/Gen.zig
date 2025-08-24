@@ -9,14 +9,14 @@ const Pair = struct {
     scd: usize,
 };
 
-pairs: std.ArrayListUnmanaged(Pair),
+pairs: std.ArrayList(Pair),
 allocator: std.mem.Allocator,
 is_running: bool = false,
 pair_idx: usize = 0,
 
 pub fn initCapacity(allocator: std.mem.Allocator, capacity: usize) !Gen {
     return .{
-        .pairs = try std.ArrayListUnmanaged(Pair).initCapacity(allocator, capacity),
+        .pairs = try .initCapacity(allocator, capacity),
         .allocator = allocator,
     };
 }
@@ -95,7 +95,7 @@ pub fn generateCombination(self: *Gen, comptime T: type, input: []const T, outpu
 /// Generates a permutation (eventually every permutation) of the `input` slice.
 pub fn generatePermutation(self: *Gen, comptime T: type, input: []const T, output: []T) !void {
     std.debug.assert(output.len >= input.len);
-    var idxs = try std.ArrayListUnmanaged(usize).initCapacity(self.allocator, input.len);
+    var idxs: std.ArrayList(usize) = try .initCapacity(self.allocator, input.len);
     defer idxs.deinit(self.allocator);
     for (0..input.len) |i| {
         idxs.appendAssumeCapacity(i);
@@ -116,7 +116,7 @@ pub fn generateSubset(self: *Gen, comptime T: type, input: []const T, output: []
 test generateIndex {
     const input = [_]u8{ 1, 2, 3, 4, 5 };
 
-    var gen = try Gen.initCapacity(std.testing.allocator, input.len);
+    var gen: Gen = try .initCapacity(std.testing.allocator, input.len);
     defer gen.deinit();
 
     var i: usize = 0;
@@ -129,14 +129,14 @@ test generateIndex {
 }
 
 test generateSequence {
-    var gen = try Gen.initCapacity(std.testing.allocator, 5);
+    var gen: Gen = try .initCapacity(std.testing.allocator, 5);
     defer gen.deinit();
 
     const bound: usize = 3;
     var i: usize = 0;
     while (gen.isRunning()) {
         var output: [bound]usize = undefined;
-        try gen.generateSequence(bound, 4, output[0..]);
+        try gen.generateSequence(bound, 4, &output);
         for (output) |elem| {
             std.debug.print("{} ", .{elem});
         }
@@ -150,14 +150,14 @@ test generateSequence {
 test generateCombination {
     const input = [_]u8{ 1, 2, 3, 4, 5 };
 
-    var gen = try Gen.initCapacity(std.testing.allocator, input.len);
+    var gen: Gen = try .initCapacity(std.testing.allocator, input.len);
     defer gen.deinit();
 
     const bound: usize = input.len;
     var i: usize = 0;
     while (gen.isRunning()) {
         var output: [bound]u8 = undefined;
-        try gen.generateCombination(u8, input[0..], output[0..]);
+        try gen.generateCombination(u8, &input, &output);
         for (output) |elem| {
             std.debug.print("{} ", .{elem});
         }
@@ -171,14 +171,14 @@ test generateCombination {
 test generatePermutation {
     const input = [_]u8{ 1, 2, 3, 4, 5 };
 
-    var gen = try Gen.initCapacity(std.testing.allocator, input.len);
+    var gen: Gen = try .initCapacity(std.testing.allocator, input.len);
     defer gen.deinit();
 
     const bound: usize = input.len;
     var i: usize = 0;
     while (gen.isRunning()) {
         var output: [bound]u8 = undefined;
-        try gen.generatePermutation(u8, input[0..], output[0..]);
+        try gen.generatePermutation(u8, &input, &output);
         for (output) |elem| {
             std.debug.print("{} ", .{elem});
         }
@@ -192,14 +192,14 @@ test generatePermutation {
 test generateSubset {
     const input = [_]u8{ 1, 2, 3, 4, 5 };
 
-    var gen = try Gen.initCapacity(std.testing.allocator, input.len);
+    var gen: Gen = try .initCapacity(std.testing.allocator, input.len);
     defer gen.deinit();
 
     const bound: usize = input.len;
     var i: usize = 0;
     while (gen.isRunning()) {
         var output: [bound]?u8 = undefined;
-        try gen.generateSubset(u8, input[0..], output[0..]);
+        try gen.generateSubset(u8, &input, &output);
         for (output) |elem_opt| {
             std.debug.print("{} ", .{elem_opt orelse continue});
         }

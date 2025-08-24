@@ -4,13 +4,13 @@
 
 ### Usage
 
-- Add `exhaustigen` dependency to `build.zig.zon`.
+1. Add `exhaustigen` dependency to `build.zig.zon`:
 
 ```sh
-zig fetch --save git+https://github.com/tensorush/zig-exhaustigen
+zig fetch --save git+https://github.com/tensorush/zig-exhaustigen.git
 ```
 
-- Use `exhaustigen` dependency in `build.zig`.
+2. Use `exhaustigen` dependency in `build.zig`:
 
 ```zig
 const exhaustigen_dep = b.dependency("exhaustigen", .{
