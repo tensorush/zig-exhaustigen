@@ -14,7 +14,7 @@ allocator: std.mem.Allocator,
 is_running: bool = false,
 pair_idx: usize = 0,
 
-pub fn initCapacity(allocator: std.mem.Allocator, capacity: usize) !Gen {
+pub fn initCapacity(allocator: std.mem.Allocator, capacity: usize) std.mem.Allocator.Error!Gen {
     return .{
         .pairs = try .initCapacity(allocator, capacity),
         .allocator = allocator,
@@ -53,7 +53,7 @@ pub fn isRunning(self: *Gen) bool {
 /// Every other value-generating method in this type ultimately funnels into
 /// this method, which is responsible (in concert with `isRunning`) for opening
 /// and stepping through ranges of the generator's state-space.
-pub fn generate(self: *Gen, bound: usize) !usize {
+pub fn generate(self: *Gen, bound: usize) std.mem.Allocator.Error!usize {
     if (self.pair_idx == self.pairs.items.len) {
         try self.pairs.append(self.allocator, .{ .scd = bound });
     }
@@ -62,19 +62,19 @@ pub fn generate(self: *Gen, bound: usize) !usize {
 }
 
 /// Returns false, then true.
-pub fn generateBool(self: *Gen) !bool {
+pub fn generateBool(self: *Gen) std.mem.Allocator.Error!bool {
     return try self.generate(1) == 1;
 }
 
 /// Returns an index (eventually every index) < `bound`.
-pub fn generateIndex(self: *Gen, bound: usize) !usize {
+pub fn generateIndex(self: *Gen, bound: usize) std.mem.Allocator.Error!usize {
     return try self.generate(bound - 1);
 }
 
 /// Generates a sequence (eventually every such sequence)
 /// of variable-value elements. The sequence's length == `bound`
 /// and each element's value <= `max_val`.
-pub fn generateSequence(self: *Gen, bound: usize, max_val: usize, output: []usize) !void {
+pub fn generateSequence(self: *Gen, bound: usize, max_val: usize, output: []usize) std.mem.Allocator.Error!void {
     const fixed = try self.generate(bound);
     std.debug.assert(output.len >= fixed);
     for (0..fixed) |i| {
@@ -84,7 +84,7 @@ pub fn generateSequence(self: *Gen, bound: usize, max_val: usize, output: []usiz
 
 /// Generates a combination (eventually every combination) of elements
 /// selected from provided `input` slice, up to the size of that slice.
-pub fn generateCombination(self: *Gen, comptime T: type, input: []const T, output: []T) !void {
+pub fn generateCombination(self: *Gen, comptime T: type, input: []const T, output: []T) std.mem.Allocator.Error!void {
     const fixed = try self.generate(input.len);
     std.debug.assert(output.len >= fixed);
     for (0..fixed) |i| {
@@ -93,7 +93,7 @@ pub fn generateCombination(self: *Gen, comptime T: type, input: []const T, outpu
 }
 
 /// Generates a permutation (eventually every permutation) of the `input` slice.
-pub fn generatePermutation(self: *Gen, comptime T: type, input: []const T, output: []T) !void {
+pub fn generatePermutation(self: *Gen, comptime T: type, input: []const T, output: []T) std.mem.Allocator.Error!void {
     std.debug.assert(output.len >= input.len);
     var idxs: std.ArrayList(usize) = try .initCapacity(self.allocator, input.len);
     defer idxs.deinit(self.allocator);
@@ -106,7 +106,7 @@ pub fn generatePermutation(self: *Gen, comptime T: type, input: []const T, outpu
 }
 
 /// Generates a subset (eventually every subset) of the `input` slice.
-pub fn generateSubset(self: *Gen, comptime T: type, input: []const T, output: []?T) !void {
+pub fn generateSubset(self: *Gen, comptime T: type, input: []const T, output: []?T) std.mem.Allocator.Error!void {
     std.debug.assert(output.len >= input.len);
     for (input, 0..) |byte, i| {
         output[i] = if (try self.generateBool()) byte else null;
