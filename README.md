@@ -17,6 +17,11 @@ const exhaustigen_dep = b.dependency("exhaustigen", .{
     .target = target,
     .optimize = optimize,
 });
-const exhaustigen_mod = exhaustigen_dep.module("Gen");
-<compile>.root_module.addImport("Gen", exhaustigen_mod);
+const exhaustigen_mod = exhaustigen_dep.module("exhaustigen");
+
+...
+    .imports = &.{
+        .{ .name = "exhaustigen", .module = exhaustigen_mod },
+    },
+...
 ```
