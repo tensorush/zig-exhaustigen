@@ -121,7 +121,9 @@ test generateIndex {
 
     var i: usize = 0;
     while (gen.isRunning()) {
-        std.debug.print("{}\n", .{try gen.generateIndex(input.len)});
+        const idx = try gen.generateIndex(input.len);
+        _ = idx;
+        // std.debug.print("{d}\n", .{idx});
         i += 1;
     }
 
@@ -137,10 +139,10 @@ test generateSequence {
     while (gen.isRunning()) {
         var output: [bound]usize = undefined;
         try gen.generateSequence(bound, 4, &output);
-        for (output) |elem| {
-            std.debug.print("{} ", .{elem});
-        }
-        std.debug.print("\n", .{});
+        // for (output) |elem| {
+        //     std.debug.print("{d} ", .{elem});
+        // }
+        // std.debug.print("\n", .{});
         i += 1;
     }
 
@@ -158,10 +160,10 @@ test generateCombination {
     while (gen.isRunning()) {
         var output: [bound]u8 = undefined;
         try gen.generateCombination(u8, &input, &output);
-        for (output) |elem| {
-            std.debug.print("{} ", .{elem});
-        }
-        std.debug.print("\n", .{});
+        // for (output) |elem| {
+        //     std.debug.print("{d} ", .{elem});
+        // }
+        // std.debug.print("\n", .{});
         i += 1;
     }
 
@@ -179,10 +181,10 @@ test generatePermutation {
     while (gen.isRunning()) {
         var output: [bound]u8 = undefined;
         try gen.generatePermutation(u8, &input, &output);
-        for (output) |elem| {
-            std.debug.print("{} ", .{elem});
-        }
-        std.debug.print("\n", .{});
+        // for (output) |elem| {
+        //     std.debug.print("{d} ", .{elem});
+        // }
+        // std.debug.print("\n", .{});
         i += 1;
     }
 
@@ -200,10 +202,10 @@ test generateSubset {
     while (gen.isRunning()) {
         var output: [bound]?u8 = undefined;
         try gen.generateSubset(u8, &input, &output);
-        for (output) |elem_opt| {
-            std.debug.print("{} ", .{elem_opt orelse continue});
-        }
-        std.debug.print("\n", .{});
+        // for (output) |elem_opt| {
+        //     std.debug.print("{d} ", .{elem_opt orelse continue});
+        // }
+        // std.debug.print("\n", .{});
         i += 1;
     }
 
