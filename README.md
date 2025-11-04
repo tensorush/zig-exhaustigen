@@ -19,9 +19,11 @@ const exhaustigen_dep = b.dependency("exhaustigen", .{
 });
 const exhaustigen_mod = exhaustigen_dep.module("exhaustigen");
 
-...
+const root_mod = b.createModule(.{
+    .target = target,
+    .optimize = optimize,
     .imports = &.{
         .{ .name = "exhaustigen", .module = exhaustigen_mod },
     },
-...
+});
 ```
